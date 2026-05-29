@@ -1,7 +1,7 @@
 from clases.citas import Citas
+
+
 class Veterinaria:
-
-
     def __init__(self, nombre, direccion, telefono):
         self.nombre = nombre
         self.direccion = direccion
