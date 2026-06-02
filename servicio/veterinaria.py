@@ -1,5 +1,9 @@
+
 import numpy as np
 from clases.producto import Producto   # import de angel
+
+from clases.citas import Citas
+
 
 TAM = 20 #ejemplo
 class Veterinaria:
@@ -7,6 +11,8 @@ class Veterinaria:
         self.nombre = nombre
         self.direccion = direccion
         self.telefono = telefono
+        self._citas = Citas()
+        
 
         # atributos agregados por angel:
         self._productos     = np.full(TAM, fill_value=None, dtype=object)
