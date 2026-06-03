@@ -98,7 +98,7 @@ class Veterinaria:
         if self.__nroClients < len(self.__clients):
             self.__clients[self.__nroClients] = Client(name, phone)
             self.__nroClients = self.__nroClients + 1
-            print(f"Cliente '{name}' registrado con éxito.")
+            print(f"El cliente {name} ha sido registrado con éxito.")
         else:
             print("No hay espacio para más clientes.")
 
@@ -111,18 +111,18 @@ class Veterinaria:
     def registrar_mascota(self, name, namePet, species, age):
         indice = self.consultar_cliente(name)
         if indice == -1:
-            print(f"El cliente '{name}' no existe")
+            print(f"El cliente {name} no está registrado")
         else:
             self.__clients[indice].agregar_mascota(namePet, species, age)
-            print(f"Mascota '{namePet}' asociada a '{name}'.")
+            print(f"La mascota llamada {namePet} está asociada a {name}.")
 
     def listar_mascotas(self, name):
         indice = self.consultar_cliente(name)
         if indice == -1:
-            print(f"El cliente '{name}' no existe")
+            print(f"El cliente {name} no está registrado")
         else:
             cliente = self.__clients[indice]
-            print(f"\n Mascotas de {cliente.name}:")
+            print(f"\n La mascota del cliente {cliente.name}:")
             for i in range(0, cliente.nroPets, 1):
                 pet = cliente.pets[i]
                 print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
