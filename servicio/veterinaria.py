@@ -122,7 +122,7 @@ class Veterinaria:
             print(f"El cliente {name} no está registrado")
         else:
             cliente = self.__clients[indice]
-            print(f"\n La mascota del cliente {cliente.name}:")
+            print(f"\n Mascotas de {cliente.name}:")
             for i in range(0, cliente.nroPets, 1):
                 pet = cliente.pets[i]
                 print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
