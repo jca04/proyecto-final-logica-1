@@ -7,7 +7,7 @@ class Client:
     def __init__(self, name, phone):
         self.__name = name
         self.__phone = phone
-        self.__pets = np.full([4], fill_value=None, dtype=Pet)
+        self.__pets = np.full(TAM, fill_value=None, dtype=Pet)
         self.__nroPets = 0
 
     @property
