@@ -17,7 +17,11 @@ class Veterinaria:
         # atributos agregados por angel:
         self._productos     = np.full(TAM, fill_value=None, dtype=object)
         self._num_productos = 0
-
+        
+        #Atributos Alejo
+        self.__clients = np.full(TAM, fill_value=None, dtype=Client)
+        self.__nroClients = 0
+    
     def mostrar_informacion(self):
         print(f"Veterinaria: {self.nombre}")
         print(f"Dirección: {self.direccion}")
@@ -88,3 +92,38 @@ class Veterinaria:
             print(f"\nProducto #{i + 1}")
             self._productos[i].mostrar()
             print("-" * 30)
+            
+#Métodos Alejo
+    def registrar_cliente(self, name, phone):
+        if self.__nroClients < len(self.__clients):
+            self.__clients[self.__nroClients] = Client(name, phone)
+            self.__nroClients = self.__nroClients + 1
+            print(f"Cliente '{name}' registrado con éxito.")
+        else:
+            print("No hay espacio para más clientes.")
+
+    def consultar_cliente(self, name):
+        for i in range(0, self.__nroClients, 1):
+            if self.__clients[i].name == name:
+                return i
+        return -1
+
+    def registrar_mascota(self, name, namePet, species, age):
+        indice = self.consultar_cliente(name)
+        if indice == -1:
+            print(f"El cliente '{name}' no existe")
+        else:
+            self.__clients[indice].agregar_mascota(namePet, species, age)
+            print(f"Mascota '{namePet}' asociada a '{name}'.")
+
+    def listar_mascotas(self, name):
+        indice = self.consultar_cliente(name)
+        if indice == -1:
+            print(f"El cliente '{name}' no existe")
+        else:
+            cliente = self.__clients[indice]
+            print(f"\n Mascotas de {cliente.name}:")
+            for i in range(0, cliente.nroPets, 1):
+                pet = cliente.pets[i]
+                print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
+    
