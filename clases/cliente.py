@@ -27,5 +27,8 @@ class Client:
         return self.__nroPets
 
     def agregarMascota(self, petName, species, age):
-        self.__pets[self.__nroPets] = Pet(petName, species, age)
-        self.__nroPets = self.__nroPets + 1
+        if self.__nroPets < len(self.__pets):
+            self.__pets[self.__nroPets] = Pet(petName, species, age)
+            self.__nroPets = self.__nroPets + 1
+        else: 
+            print(f"El cliente {self.__name} no puede registrar a su mascotas.")
