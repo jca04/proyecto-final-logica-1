@@ -41,9 +41,11 @@ class Menu:
      
     def __menu_clientes(self):
         print("Menú de Clientes")
+        print("Funcionalidad en desarrollo.")
 
     def __menu_mascotas(self):
         print("Menú de Mascotas")
+        print("Funcionalidad en desarrollo.")       
 
     def __menu_citas(self):
         
@@ -118,5 +120,33 @@ class Menu:
                 case _:
                     print("Opción no válida. Por favor, seleccione una opción del menú.")
     
+    # menu de producto Angel
     def __menu_productos(self):
-        print("Menú de Productos")
+        while True:
+            print("\n============= Menú de Productos =============")
+            print("1. Agregar producto")
+            print("2. Actualizar stock")
+            print("3. Ver productos con poco stock")
+            print("4. Ver todos los productos")
+            print("0. Volver al menú principal")
+
+            opcion = input("\nSeleccione una opción: ")
+
+            match opcion:
+                case "1":
+                    self.veterinaria.crear_producto()
+
+                case "2":
+                    self.veterinaria.actualizar_stock()
+
+                case "3":
+                    self.veterinaria.productos_bajo_stock()
+
+                case "4":
+                    self.veterinaria.ver_productos()
+
+                case "0":
+                    break
+
+                case _:
+                    print("Opción no válida. Por favor, seleccione una opción del menú.")
