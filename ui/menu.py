@@ -143,7 +143,8 @@ class Menu:
                     stock_minimo = int(input("Stock mínimo: "))
 
 
-                    return self.veterinaria.crear_producto(nombre, cantidad, precio, categoria, stock_minimo)
+                    respuesta = self.veterinaria.crear_producto(nombre, cantidad, precio, categoria, stock_minimo)
+                    print(respuesta)
 
                 case "2":
                     self.veterinaria.actualizar_stock()
