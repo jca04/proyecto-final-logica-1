@@ -3,7 +3,6 @@ from clases.cliente import Client
 from clases.producto import Producto   # import de angel
 from clases.citas import Citas
 import csv
-import os
 from utils.obtener_bd import get_file_path
 
 class Veterinaria:
@@ -11,54 +10,19 @@ class Veterinaria:
         self.nombre = nombre
         self.direccion = direccion
         self.telefono = telefono
+        self._citas = Citas()
+        self._producto = Producto()
 
     def mostrar_informacion(self):
         print(f"Veterinaria: {self.nombre}")
         print(f"Dirección: {self.direccion}")
         print(f"Teléfono: {self.telefono}")
 
-    def __asegurar_archivo_productos(self):
-        ruta = get_file_path("productos.csv")
 
-        if not os.path.exists(ruta) or os.path.getsize(ruta) == 0:
-            with open(ruta, mode="w", newline="", encoding="utf-8") as archivo:
-                escritor = csv.writer(archivo)
-                escritor.writerow([
-                    "producto_id",
-                    "nombre",
-                    "cantidad",
-                    "precio",
-                    "categoria",
-                    "stock_minimo"
-                ])
-
-    def crear_producto(self):
-        self.__asegurar_archivo_productos()
-        ruta = get_file_path("productos.csv")
-
-        print("\n--- REGISTRAR PRODUCTO ---")
-        producto_id = input("ID del producto: ")
-        nombre = input("Nombre: ")
-        cantidad = int(input("Cantidad inicial: "))
-        precio = float(input("Precio unitario: "))
-        categoria = input("Categoría: ")
-        stock_minimo = int(input("Stock mínimo: "))
-
-        with open(ruta, mode="a", newline="", encoding="utf-8") as archivo:
-            escritor = csv.writer(archivo)
-            escritor.writerow([
-                producto_id,
-                nombre,
-                cantidad,
-                precio,
-                categoria,
-                stock_minimo
-            ])
-
-        print("Producto registrado correctamente.")
+    def crear_producto(self, nombre, cantidad, precio, categoria, stock_minimo):
+        return self._producto.registrar_producto(nombre, cantidad, precio, categoria, stock_minimo)
 
     def ver_productos(self):
-        self.__asegurar_archivo_productos()
         ruta = get_file_path("productos.csv")
 
         with open(ruta, mode="r", newline="", encoding="utf-8") as archivo:
@@ -80,7 +44,6 @@ class Veterinaria:
             print("-" * 30)
 
     def productos_bajo_stock(self):
-        self.__asegurar_archivo_productos()
         ruta = get_file_path("productos.csv")
 
         with open(ruta, mode="r", newline="", encoding="utf-8") as archivo:
@@ -106,7 +69,6 @@ class Veterinaria:
             print("No hay productos con poco stock.")
 
     def actualizar_stock(self):
-        self.__asegurar_archivo_productos()
         ruta = get_file_path("productos.csv")
 
         with open(ruta, mode="r", newline="", encoding="utf-8") as archivo:
