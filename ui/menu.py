@@ -105,10 +105,43 @@ class Menu:
                     print(cita)
 
                 case "2":
-                    pass
+
+                        print("\n--- Ver citas de una mascota ---")
+                        cedula_cliente = int(input("Ingrese la cédula del cliente: "))
+
+                        cliente = self.veterinaria.buscar_cliente(cedula_cliente)
+
+                        if not cliente:
+                            print("Cliente no encontrado.")
+                            return
+
+                        cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
+
+                        mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
+
+                        cliente.mostrar_citas_de_mascota(mascota_id)
                 
                 case "3":
-                    pass
+                    
+                    print("\n--- Cancelar una cita ---")
+                    cedula_cliente = int(input("Ingrese la cédula del cliente: "))
+
+                    cliente = self.veterinaria.buscar_cliente(cedula_cliente)
+
+                    if not cliente:
+                        print("Cliente no encontrado.")
+                        return
+                    
+                    cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
+
+                    mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
+
+                    cliente.mostrar_citas_de_mascota(mascota_id)
+
+                    cita_id = int(input("\nIngrese el ID de la cita que desea cancelar: "))
+
+                    self.veterinaria.cancelar_cita(cita_id)
+                    print("Cita cancelada con éxito.")
 
                 case "4":
                     pass
