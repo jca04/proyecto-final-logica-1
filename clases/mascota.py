@@ -15,3 +15,27 @@ class Mascota:
         self.__cliente_id = cliente_id
         self.__registro_medico = np.full(self.__TAM_REGISTRO_MEDICO, fill_value=None, dtype=RegistroMedico)
         self.__nroRegistros = 0
+
+    @property
+    def mascota_id(self):
+        return self.__mascota_id
+
+    @property
+    def nombre(self):
+        return self.__nombre
+    
+    @property
+    def especie(self):
+        return self.__especie
+    
+    @property
+    def raza(self):
+        return self.__raza
+    
+    @property
+    def edad(self):
+        return self.__edad
+    
+    @property
+    def cliente_id(self):
+        return self.__cliente_id
