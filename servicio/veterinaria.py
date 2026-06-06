@@ -1,26 +1,91 @@
-
-from clases.cliente import Client
+import numpy as np
+from clases.cliente import Cliente
 from clases.producto import Producto   # import de angel
 from clases.citas import Citas
-import csv
+from clases.veterinario import Veterinario
+from utils.citas import existe_cita_para_mascota, obtener_veterinarios_disponibles
 from utils.obtener_bd import get_file_path
 
 class Veterinaria:
+
+    __TAM = 200 # tamaño que vamos a usar para llenar los arreglos
+
+
     def __init__(self, nombre, direccion, telefono):
         self.nombre = nombre
         self.direccion = direccion
         self.telefono = telefono
-        self._citas = Citas()
-        self._producto = Producto()
+
+        self.__clientes = np.full(self.__TAM, fill_value=None, dtype=Cliente)
+        self.__nroClientes = 0
+
+        self.__citas = np.full(self.__TAM, fill_value=None, dtype=Citas)
+        self.__nroCitas = 0
+
+        self.__productos = np.full(self.__TAM, fill_value=None, dtype=Producto)
+        self.__nroProductos = 0
+
+        self.__veterinarios = np.full(self.__TAM, fill_value=None, dtype=Veterinario)
+        self.__nroVeterinarios = 0
+
+        self.__cargar_todo()
 
     def mostrar_informacion(self):
         print(f"Veterinaria: {self.nombre}")
         print(f"Dirección: {self.direccion}")
         print(f"Teléfono: {self.telefono}")
 
+    def __cargar_todo(self):
+        self.__cargar_clientes()
+        #self.__cargar_mascotas()    # depende de que clientes ya estén cargados
+        #self.__cargar_registros()   # depende de que mascotas ya estén cargadas
+        self.__cargar_citas()
+        #self.__cargar_productos() # pendiente
+
+    
+    def __cargar_clientes(self):
+        with open(get_file_path("clientes.csv"), "r") as f:
+            for linea in f:
+                cliente_id, nombre, telefono, cedula = linea.strip().split(",")
+                self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
+                self.__nroClientes += 1
+
+    def __cargar_citas(self):
+        with open(get_file_path("citas.csv"), "r") as f:
+            for linea in f:
+                cita_id, fecha, hora, motivo, estado, mascota_id, vet_id = linea.strip().split(",")
+                self.__citas[self.__nroCitas] = Citas(mascota_id, vet_id, fecha, hora, motivo, estado, cita_id)
+                self.__nroCitas += 1
+
+    ## generación y validacion de ids para no pisar ninguno existente, se tendria que hacer por cada clase
+
+
+    # esta logica se repetiria para validar y generar cada id
+    def __siguiente_id_cliente(self):
+        if self.__nroClientes == 0:
+            return 1
+        
+        ids = np.array([], dtype=int)
+
+        for c in self.__clientes[:self.__nroClientes]:
+            ids = np.append(ids, int(c.cliente_id))
+
+        return max(ids) + 1
+    
+    def __siguiente_id_cita(self):
+        if self.__nroCitas == 0:
+            return 1
+        
+        ids = np.array([], dtype=int)
+
+        for c in self.__citas[:self.__nroCitas]:
+            ids = np.append(ids, int(c.cita_id))
+
+        return max(ids) + 1
+
 
     def crear_producto(self, nombre, cantidad, precio, categoria, stock_minimo):
-        return self._producto.registrar_producto(nombre, cantidad, precio, categoria, stock_minimo)
+        return self.__producto.registrar_producto(nombre, cantidad, precio, categoria, stock_minimo)
 
     def ver_productos(self):
         ruta = get_file_path("productos.csv")
@@ -143,4 +208,53 @@ class Veterinaria:
             for i in range(0, cliente.nroPets, 1):
                 pet = cliente.pets[i]
                 print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
+    
+
+    ## Metodos para las citas
+    def crear_cita(self, fecha, hora, motivo, especialidad, mascota_id):
+        
+        citas_activas = self.__citas[:self.__nroCitas] # aqui obtengo solo las citas que ya están registradas, no todo el arreglo
+
+        cita_duplicada = False
+
+        for c in citas_activas:
+            if c.mascota_id == mascota_id and c.fecha == fecha and c.hora == hora:
+                cita_duplicada = True
+                break
+
+        if cita_duplicada:
+            print("La mascota ya tiene una cita agendada en ese horario.")
+            return
+        
+        veterinarios_activos = self.__veterinarios[:self.__nroVeterinarios]
+
+        veterinarios_disponibles = np.array([], dtype=Veterinario)
+
+        for v in veterinarios_activos:
+            disponible = True
+
+            for c in citas_activas:
+                if c.vet_id == v.vet_id and c.fecha == fecha and c.hora == hora:
+                    disponible = False
+                    break
+
+            if disponible and v.especialidad.lower() == especialidad.lower():
+                veterinarios_disponibles = np.append(veterinarios_disponibles, v)
+
+        if len(veterinarios_disponibles) == 0:
+            print("No hay veterinarios disponibles en ese horario para la especialidad seleccionada.")
+            return
+        
+        veterinario_asignado = veterinarios_disponibles[0]
+
+        cita_id = self.__siguiente_id_cita()
+        self.__citas[self.__nroCitas] = Citas(mascota_id, veterinario_asignado.veterinario_id, fecha, hora, motivo, "agendada", cita_id)
+        self.__nroCitas = self.__nroCitas + 1
+        self.__guardar_citas()
+
+    
+    def __guardar_citas(self):
+        with open(get_file_path("citas.csv"), "w") as f:
+            for c in self.__citas[:self.__nroCitas]:
+                f.write(f"{c.cita_id},{c.fecha},{c.hora},{c.motivo},{c.estado},{c.mascota_id},{c.vet_id}\n")
     

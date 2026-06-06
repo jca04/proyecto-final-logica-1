@@ -1,34 +1,37 @@
-class Client:
-    
-    __name: str
-    __phone: str
-    __nroPets: int
+import numpy as np
+from clases.mascota import Mascota
 
-    def __init__(self, name, phone):
-        self.__name = name
-        self.__phone = phone
-        self.__pets = np.full(TAM, fill_value=None, dtype=Pet)
-        self.__nroPets = 0
+class Cliente:
+
+    __TAM_MASCOTAS = 200
+
+    def __init__(self, cliente_id: str, nombre: str, telefono: str, cedula: str):
+        self.__cliente_id = cliente_id
+        self.__nombre = nombre
+        self.__telefono = telefono
+        self.__cedula = cedula
+        self.__mascotas = np.full(self.__TAM_MASCOTAS, fill_value=None, dtype=Mascota)
+        self.__nroMascotas = 0
 
     @property
     def name(self):
-        return self.__name
+        return self.__nombre
 
     @property
     def phone(self):
-        return self.__phone
+        return self.__telefono
     
     @property
     def pets(self):
-        return self.__pets
+        return self.__mascotas
 
     @property
     def nroPets(self):
-        return self.__nroPets
+        return self.__nroMascotas
 
-    def agregarMascota(self, petName, species, age):
-        if self.__nroPets < len(self.__pets):
-            self.__pets[self.__nroPets] = Pet(petName, species, age)
-            self.__nroPets = self.__nroPets + 1
+    def agregarMascota(self, nombre, especie, raza, edad, cliente_id, mascota_id = None):
+        if self.__nroMascotas < len(self.__mascotas):
+            self.__mascotas[self.__nroMascotas] = Mascota(nombre, especie, raza, edad, cliente_id, mascota_id)
+            self.__nroMascotas = self.__nroMascotas + 1
         else: 
-            print(f"El cliente {self.__name} no puede registrar a su mascotas.")
+            print(f"El cliente {self.__nombre} no puede registrar a su mascotas.")

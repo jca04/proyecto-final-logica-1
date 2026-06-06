@@ -76,12 +76,12 @@ class Menu:
 
                     print("\n --- Identificación de la mascota ---")
 
-                    self.veterinaria.mostrar_mascotas_de_cliente(cliente["cliente_id"]) # -> esto deberia mostrar por pantalla en una lista las mascotas del cliente respectivo con su id, nombre, especie y raza
+                    cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"]) # -> esto deberia mostrar por pantalla en una lista las mascotas del cliente respectivo con su id, nombre, especie y raza
 
                     opcion_mascota = input("¿La mascota para la cita ya está registrada? (s/n): ").lower()
 
                     if opcion_mascota == "s":
-                        mascota_id = input("Ingrese el ID  de la mascota que asistirá a la cita: ")
+                        mascota_id = int(input("Ingrese el ID  de la mascota que asistirá a la cita: "))
                     else:
                         print("\nRegistrando nueva mascota para este cliente:")
                         nombre_mascota = input("Nombre de la mascota: ")
@@ -103,7 +103,6 @@ class Menu:
 
                     print("\n¡Cita agendada con éxito!")
                     print(cita)
-                    pass
 
                 case "2":
                     pass

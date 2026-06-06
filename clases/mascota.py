@@ -1,22 +1,17 @@
-class Pet:
-    
-    __petName: str
-    __species: str
-    __age: int
+import numpy as np
 
-    def __init__(self, petName, species, age):
-        self.__petName = petName
-        self.__species = species
-        self.__age = age
+from clases.registro_medico import RegistroMedico
 
-    @property
-    def petName(self):
-        return self.__petName
+class Mascota:
 
-    @property
-    def species(self):
-        return self.__species
-        
-    @property
-    def age(self):
-        return self.__age
+    __TAM_REGISTRO_MEDICO = 200
+
+    def __init__(self, nombre: str, especie: str, raza: str, edad: int, cliente_id: int, mascota_id = None):
+        self.__mascota_id = mascota_id
+        self.__nombre = nombre
+        self.__especie = especie
+        self.__raza = raza
+        self.__edad = edad
+        self.__cliente_id = cliente_id
+        self.__registro_medico = np.full(self.__TAM_REGISTRO_MEDICO, fill_value=None, dtype=RegistroMedico)
+        self.__nroRegistros = 0
