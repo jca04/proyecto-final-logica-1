@@ -14,19 +14,27 @@ class Cliente:
         self.__nroMascotas = 0
 
     @property
-    def name(self):
+    def cliente_id(self):
+        return self.__cliente_id
+    
+    @property
+    def nombre(self):
         return self.__nombre
 
     @property
-    def phone(self):
+    def telefono(self):
         return self.__telefono
     
     @property
-    def pets(self):
+    def cedula(self):
+        return self.__cedula
+    
+    @property
+    def mascotas(self):
         return self.__mascotas
 
     @property
-    def nroPets(self):
+    def nroMascotas(self):
         return self.__nroMascotas
 
     def agregarMascota(self, nombre, especie, raza, edad, cliente_id, mascota_id = None):
