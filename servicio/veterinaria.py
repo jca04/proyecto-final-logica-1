@@ -217,38 +217,38 @@ class Veterinaria:
 #fin metodos productos-----------------------------------------------------------------------------------------------
 
 #Métodos Alejo
-    # def registrar_cliente(self, name, phone):
-    #     if self.__nroClients < len(self.__clients):
-    #         self.__clients[self.__nroClients] = Client(name, phone)
-    #         self.__nroClients = self.__nroClients + 1
-    #         print(f"El cliente {name} ha sido registrado con éxito.")
-    #     else:
-    #         print("No hay espacio para más clientes.")
+    def registrar_cliente(self, cliente_id: str, nombre: str, telefono: str, cedula: str):
+        if self.__nroClientes < len(self.__clientes):
+            self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
+            self.__nroClientes = self.__nroClientes + 1
+            print(f"El cliente {nombre} ha sido registrado con éxito.")
+        else:
+           print("No hay espacio para más clientes.")
 
-    # def consultar_cliente(self, name):
-    #     for i in range(0, self.__nroClients, 1):
-    #         if self.__clients[i].name == name:
-    #             return i
-    #     return -1
+    def consultar_cliente(self, cliente_id: str):
+        for i in range(0, self.__nroClientes, 1):
+            if self.__clientes[i].cliente_id == cliente_id:  # busca por id
+                return i
+        return -1
 
-    # def registrar_mascota(self, name, namePet, species, age):
-    #     indice = self.consultar_cliente(name)
-    #     if indice == -1:
-    #         print(f"El cliente {name} no está registrado")
-    #     else:
-    #         self.__clients[indice].agregar_mascota(namePet, species, age)
-    #         print(f"La mascota llamada {namePet} está asociada a {name}.")
+    def registrar_mascota(self, cliente_id: str, nombre: str, especie: str, raza: str, edad: int, mascota_id=None):
+        indice = self.consultar_cliente(cliente_id)
+        if indice == -1:
+            print(f"El cliente con id {cliente_id} no está registrado.")
+        else:
+            self.__clientes[indice].agregarMascota(nombre, especie, raza, edad, mascota_id)
+            print(f"La mascota {nombre} está asociada al cliente {cliente_id}.")
 
-    # def listar_mascotas(self, name):
-    #     indice = self.consultar_cliente(name)
-    #     if indice == -1:
-    #         print(f"El cliente {name} no está registrado")
-    #     else:
-    #         cliente = self.__clients[indice]
-    #         print(f"\n Mascotas de {cliente.name}:")
-    #         for i in range(0, cliente.nroPets, 1):
-    #             pet = cliente.pets[i]
-    #             print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
+    def listar_mascotas(self, cliente_id: str):
+        indice = self.consultar_cliente(cliente_id)
+        if indice == -1:
+            print(f"El cliente con id {cliente_id} no está registrado.")
+        else:
+            cliente = self.__clientes[indice]
+            print(f"\nMascotas de {cliente.nombre}:")
+            for i in range(0, cliente.nroMascotas, 1):
+                mascota = cliente.mascotas[i]
+                print(f"  - {mascota.n} ({mascota.especie}, {mascota.raza}, {mascota.edad} años)")
     
 
     ## Metodos para las citas
