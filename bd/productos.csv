@@ -1,1 +1,3 @@
 producto_id,nombre,cantidad,precio,categoria,stock_minimo
+1,Shampoo para perros,45,8500.0,Aseo,1
+2,Antipulgas,3,5500.0,Aseo,1

@@ -5,7 +5,7 @@ class Cliente:
 
     __TAM_MASCOTAS = 200
 
-    def __init__(self, cliente_id: str, nombre: str, telefono: str, cedula: str):
+    def __init__(self, cliente_id: int, nombre: str, telefono: str, cedula: str):
         self.__cliente_id = cliente_id
         self.__nombre = nombre
         self.__telefono = telefono

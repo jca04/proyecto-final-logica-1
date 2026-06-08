@@ -63,85 +63,90 @@ class Menu:
                 
                 case "1":
 
-                    print("\n--- Identificación del cliente ---")
-                    cedula_cliente = input("Ingrese la cédula del cliente: ")
+                    # print("\n--- Identificación del cliente ---")
+                    # cedula_cliente = input("Ingrese la cédula del cliente: ")
 
-                    cliente = self.veterinaria.buscar_cliente(cedula_cliente) # -> esto deberia retornar un diccionario con la información del cliente incluyendo su id si no existe retornar None
-                    if not cliente:
-                        print("Cliente no encontrado. Procediendo a registrar nuevo cliente.")
-                        nombre_cliente = input("Ingrese el nombre del cliente: ")
-                        telefono_cliente = input("Ingrese el teléfono del cliente: ")
+                    # cliente = self.veterinaria.buscar_cliente(cedula_cliente) # -> esto deberia retornar un diccionario con la información del cliente incluyendo su id si no existe retornar None
+                    # if not cliente:
+                    #     print("Cliente no encontrado. Procediendo a registrar nuevo cliente.")
+                    #     nombre_cliente = input("Ingrese el nombre del cliente: ")
+                    #     telefono_cliente = input("Ingrese el teléfono del cliente: ")
 
-                        cliente = self.veterinaria.registrar_cliente(nombre_cliente, cedula_cliente, telefono_cliente)
+                    #     cliente = self.veterinaria.registrar_cliente(nombre_cliente, cedula_cliente, telefono_cliente)
 
-                    print("\n --- Identificación de la mascota ---")
+                    # print("\n --- Identificación de la mascota ---")
 
-                    cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"]) # -> esto deberia mostrar por pantalla en una lista las mascotas del cliente respectivo con su id, nombre, especie y raza
+                    # cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"]) # -> esto deberia mostrar por pantalla en una lista las mascotas del cliente respectivo con su id, nombre, especie y raza
 
-                    opcion_mascota = input("¿La mascota para la cita ya está registrada? (s/n): ").lower()
+                    # opcion_mascota = input("¿La mascota para la cita ya está registrada? (s/n): ").lower()
 
-                    if opcion_mascota == "s":
-                        mascota_id = int(input("Ingrese el ID  de la mascota que asistirá a la cita: "))
-                    else:
-                        print("\nRegistrando nueva mascota para este cliente:")
-                        nombre_mascota = input("Nombre de la mascota: ")
-                        edad_mascota = input("Edad de la mascota: ")
-                        especie_mascota = input("Especie (Perro, Gato, etc.): ")
-                        raza_mascota = input("Raza: ")
+                    # if opcion_mascota == "s":
+                    #     mascota_id = int(input("Ingrese el ID  de la mascota que asistirá a la cita: "))
+                    # else:
+                    #     print("\nRegistrando nueva mascota para este cliente:")
+                    #     nombre_mascota = input("Nombre de la mascota: ")
+                    #     edad_mascota = input("Edad de la mascota: ")
+                    #     especie_mascota = input("Especie (Perro, Gato, etc.): ")
+                    #     raza_mascota = input("Raza: ")
 
-                        mascota_id = self.veterinaria.registrar_mascota(
-                            nombre_mascota, edad_mascota, especie_mascota, raza_mascota, cliente["cliente_id"]
-                        )
+                    #     mascota_id = self.veterinaria.registrar_mascota(
+                    #         nombre_mascota, edad_mascota, especie_mascota, raza_mascota, cliente["cliente_id"]
+                    #     )
 
-                    print("\n--- Datos de la cita ---")
-                    fecha = input("Ingrese la fecha de la cita (YYYY-MM-DD): ")
-                    hora = input("Ingrese la hora de la cita (HH:MM): ")
-                    motivo = input("Ingrese el motivo de la cita: ")
-                    especialidad = input("Ingrese la especialidad requerida: ").lower()
+                    # print("\n--- Datos de la cita ---")
+                    # fecha = input("Ingrese la fecha de la cita (YYYY-MM-DD): ")
+                    # hora = input("Ingrese la hora de la cita (HH:MM): ")
+                    # motivo = input("Ingrese el motivo de la cita: ")
+                    # especialidad = input("Ingrese la especialidad requerida: ").lower()
 
-                    cita = self.veterinaria.crear_cita(fecha, hora, motivo, especialidad, mascota_id)
+                    # cita = self.veterinaria.crear_cita(fecha, hora, motivo, especialidad, mascota_id)
 
-                    print("\n¡Cita agendada con éxito!")
-                    print(cita)
+                    # print("\n¡Cita agendada con éxito!")
+                    # print(cita)
+
+                    pass
 
                 case "2":
 
-                        print("\n--- Ver citas de una mascota ---")
-                        cedula_cliente = int(input("Ingrese la cédula del cliente: "))
+                        # print("\n--- Ver citas de una mascota ---")
+                        # cedula_cliente = int(input("Ingrese la cédula del cliente: "))
 
-                        cliente = self.veterinaria.buscar_cliente(cedula_cliente)
+                        # cliente = self.veterinaria.buscar_cliente(cedula_cliente)
 
-                        if not cliente:
-                            print("Cliente no encontrado.")
-                            return
+                        # if not cliente:
+                        #     print("Cliente no encontrado.")
+                        #     return
 
-                        cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
+                        # cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
 
-                        mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
+                        # mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
 
-                        cliente.mostrar_citas_de_mascota(mascota_id)
+                        # cliente.mostrar_citas_de_mascota(mascota_id)
+                        pass
                 
                 case "3":
                     
-                    print("\n--- Cancelar una cita ---")
-                    cedula_cliente = int(input("Ingrese la cédula del cliente: "))
+                    # print("\n--- Cancelar una cita ---")
+                    # cedula_cliente = int(input("Ingrese la cédula del cliente: "))
 
-                    cliente = self.veterinaria.buscar_cliente(cedula_cliente)
+                    # cliente = self.veterinaria.buscar_cliente(cedula_cliente)
 
-                    if not cliente:
-                        print("Cliente no encontrado.")
-                        return
+                    # if not cliente:
+                    #     print("Cliente no encontrado.")
+                    #     return
                     
-                    cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
+                    # cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
 
-                    mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
+                    # mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
 
-                    cliente.mostrar_citas_de_mascota(mascota_id)
+                    # cliente.mostrar_citas_de_mascota(mascota_id)
 
-                    cita_id = int(input("\nIngrese el ID de la cita que desea cancelar: "))
+                    # cita_id = int(input("\nIngrese el ID de la cita que desea cancelar: "))
 
-                    self.veterinaria.cancelar_cita(cita_id)
-                    print("Cita cancelada con éxito.")
+                    # self.veterinaria.cancelar_cita(cita_id)
+                    # print("Cita cancelada con éxito.")
+
+                    pass
 
                 case "4":
                     pass

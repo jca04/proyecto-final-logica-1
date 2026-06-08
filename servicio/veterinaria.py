@@ -46,16 +46,30 @@ class Veterinaria:
     
     def __cargar_clientes(self):
         with open(get_file_path("clientes.csv"), "r") as f:
-            for linea in f:
-                cliente_id, nombre, telefono, cedula = linea.strip().split(",")
-                self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
+            lector = csv.DictReader(f)
+            for linea in lector:
+                c = Cliente(
+                    int(linea["cliente_id"]),
+                    linea["nombre"],
+                    linea["telefono"],
+                    linea["cedula"]
+                )
+                self.__clientes[self.__nroClientes] = c
                 self.__nroClientes += 1
 
     def __cargar_citas(self):
         with open(get_file_path("citas.csv"), "r") as f:
-            for linea in f:
-                cita_id, fecha, hora, motivo, estado, mascota_id, vet_id = linea.strip().split(",")
-                self.__citas[self.__nroCitas] = Citas(mascota_id, vet_id, fecha, hora, motivo, estado, cita_id)
+            lector = csv.DictReader(f)
+            for linea in lector:
+                ci = Citas(
+                    int(linea["mascota_id"]),
+                    int(linea["vet_id"]),
+                    linea["fecha"],
+                    linea["hora"],
+                    linea["motivo"],
+                    linea["estado"],
+                )
+                self.__citas[self.__nroCitas] = ci
                 self.__nroCitas += 1
 
     ## generación y validacion de ids para no pisar ninguno existente, se tendria que hacer por cada clase
@@ -136,7 +150,7 @@ class Veterinaria:
             print("No hay espacio para más productos.")
             return
 
-        print("\nREGISTRAr PRODUCTO")
+        print("\nREGISTRAR PRODUCTO")
         nombre      = input("Nombre: ")
         cantidad    = int(input("Cantidad inicial: "))
         precio      = float(input("Precio unitario: "))
@@ -203,38 +217,38 @@ class Veterinaria:
 #fin metodos productos-----------------------------------------------------------------------------------------------
 
 #Métodos Alejo
-    def registrar_cliente(self, name, phone):
-        if self.__nroClients < len(self.__clients):
-            self.__clients[self.__nroClients] = Client(name, phone)
-            self.__nroClients = self.__nroClients + 1
-            print(f"El cliente {name} ha sido registrado con éxito.")
-        else:
-            print("No hay espacio para más clientes.")
+    # def registrar_cliente(self, name, phone):
+    #     if self.__nroClients < len(self.__clients):
+    #         self.__clients[self.__nroClients] = Client(name, phone)
+    #         self.__nroClients = self.__nroClients + 1
+    #         print(f"El cliente {name} ha sido registrado con éxito.")
+    #     else:
+    #         print("No hay espacio para más clientes.")
 
-    def consultar_cliente(self, name):
-        for i in range(0, self.__nroClients, 1):
-            if self.__clients[i].name == name:
-                return i
-        return -1
+    # def consultar_cliente(self, name):
+    #     for i in range(0, self.__nroClients, 1):
+    #         if self.__clients[i].name == name:
+    #             return i
+    #     return -1
 
-    def registrar_mascota(self, name, namePet, species, age):
-        indice = self.consultar_cliente(name)
-        if indice == -1:
-            print(f"El cliente {name} no está registrado")
-        else:
-            self.__clients[indice].agregar_mascota(namePet, species, age)
-            print(f"La mascota llamada {namePet} está asociada a {name}.")
+    # def registrar_mascota(self, name, namePet, species, age):
+    #     indice = self.consultar_cliente(name)
+    #     if indice == -1:
+    #         print(f"El cliente {name} no está registrado")
+    #     else:
+    #         self.__clients[indice].agregar_mascota(namePet, species, age)
+    #         print(f"La mascota llamada {namePet} está asociada a {name}.")
 
-    def listar_mascotas(self, name):
-        indice = self.consultar_cliente(name)
-        if indice == -1:
-            print(f"El cliente {name} no está registrado")
-        else:
-            cliente = self.__clients[indice]
-            print(f"\n Mascotas de {cliente.name}:")
-            for i in range(0, cliente.nroPets, 1):
-                pet = cliente.pets[i]
-                print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
+    # def listar_mascotas(self, name):
+    #     indice = self.consultar_cliente(name)
+    #     if indice == -1:
+    #         print(f"El cliente {name} no está registrado")
+    #     else:
+    #         cliente = self.__clients[indice]
+    #         print(f"\n Mascotas de {cliente.name}:")
+    #         for i in range(0, cliente.nroPets, 1):
+    #             pet = cliente.pets[i]
+    #             print(f"  - {pet.petName} ({pet.species}, {pet.age} años)")
     
 
     ## Metodos para las citas
@@ -282,6 +296,18 @@ class Veterinaria:
     
     def __guardar_citas(self):
         with open(get_file_path("citas.csv"), "w") as f:
+            campos = ["cita_id", "fecha", "hora", "motivo", "estado", "mascota_id", "vet_id"]
+            escritor = csv.DictWriter(f, fieldnames=campos)
+            escritor.writeheader()
+            
             for c in self.__citas[:self.__nroCitas]:
-                f.write(f"{c.cita_id},{c.fecha},{c.hora},{c.motivo},{c.estado},{c.mascota_id},{c.vet_id}\n")
+                escritor.writerow({
+                    "cita_id": c.cita_id,
+                    "fecha": c.fecha,
+                    "hora": c.hora,
+                    "motivo": c.motivo,
+                    "estado": c.estado,
+                    "mascota_id": c.mascota_id,
+                    "vet_id": c.vet_id
+                })
     
