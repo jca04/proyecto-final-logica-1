@@ -153,6 +153,7 @@ class Menu:
                     print("Opción no válida. Por favor, seleccione una opción del menú.")
     
     # menu de producto Angel
+        
     def __menu_productos(self):
         while True:
             print("\n============= Menú de Productos =============")
@@ -166,17 +167,7 @@ class Menu:
 
             match opcion:
                 case "1":
-
-                    print("\n--- REGISTRAR PRODUCTO ---")
-                    nombre = input("Nombre: ")
-                    cantidad = int(input("Cantidad inicial: "))
-                    precio = float(input("Precio unitario: "))
-                    categoria = input("Categoría: ")
-                    stock_minimo = int(input("Stock mínimo: "))
-
-
-                    respuesta = self.veterinaria.crear_producto(nombre, cantidad, precio, categoria, stock_minimo)
-                    print(respuesta)
+                    self.veterinaria.crear_producto()
 
                 case "2":
                     self.veterinaria.actualizar_stock()

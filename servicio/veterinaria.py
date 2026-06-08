@@ -1,4 +1,5 @@
 import numpy as np
+import csv
 from clases.cliente import Cliente
 from clases.producto import Producto   # import de angel
 from clases.citas import Citas
@@ -40,7 +41,7 @@ class Veterinaria:
         #self.__cargar_mascotas()    # depende de que clientes ya estén cargados
         #self.__cargar_registros()   # depende de que mascotas ya estén cargadas
         self.__cargar_citas()
-        #self.__cargar_productos() # pendiente
+        self.__cargar_productos() 
 
     
     def __cargar_clientes(self):
@@ -83,97 +84,123 @@ class Veterinaria:
 
         return max(ids) + 1
 
+#--- metodos productos
 
-    def crear_producto(self, nombre, cantidad, precio, categoria, stock_minimo):
-        return self.__producto.registrar_producto(nombre, cantidad, precio, categoria, stock_minimo)
+    def __cargar_productos(self):
+        with open(get_file_path("productos.csv"), "r", encoding="utf-8") as f:
+            lector = csv.DictReader(f)
+            for fila in lector:
+                p = Producto(
+                    int(fila["producto_id"]),
+                    fila["nombre"],
+                    int(fila["cantidad"]),
+                    float(fila["precio"]),
+                    fila["categoria"],
+                    int(fila["stock_minimo"])
+                )
+                self.__productos[self.__nroProductos] = p
+                self.__nroProductos += 1
+    
+    def __siguiente_id_producto(self):
+        if self.__nroProductos == 0:
+            return 1
 
-    def ver_productos(self):
+        ids = np.array([], dtype=int)
+
+        for p in self.__productos[:self.__nroProductos]:
+            ids = np.append(ids, int(p.producto_id))
+
+        return max(ids) + 1
+    
+    def __guardar_productos(self):
         ruta = get_file_path("productos.csv")
 
-        with open(ruta, mode="r", newline="", encoding="utf-8") as archivo:
-            lector = csv.DictReader(archivo)
-            productos = list(lector)
+        with open(ruta, "w", newline="", encoding="utf-8") as f:
+            campos = ["producto_id", "nombre", "cantidad", "precio", "categoria", "stock_minimo"]
+            escritor = csv.DictWriter(f, fieldnames=campos)
+            escritor.writeheader()
 
-        if len(productos) == 0:
-            print("No hay productos registrados.")
+            for p in self.__productos[:self.__nroProductos]:
+                escritor.writerow({
+                    "producto_id":  p.producto_id,
+                    "nombre":       p.nombre,
+                    "cantidad":     p.cantidad,
+                    "precio":       p.precio,
+                    "categoria":    p.categoria,
+                    "stock_minimo": p.stock_minimo
+                })
+
+
+    def crear_producto(self):
+        if self.__nroProductos == self.__TAM:
+            print("No hay espacio para más productos.")
             return
 
-        print("\n--- INVENTARIO COMPLETO ---")
-        for producto in productos:
-            print(f"ID: {producto['producto_id']}")
-            print(f"Nombre: {producto['nombre']}")
-            print(f"Cantidad: {producto['cantidad']}")
-            print(f"Precio: {producto['precio']}")
-            print(f"Categoría: {producto['categoria']}")
-            print(f"Stock mínimo: {producto['stock_minimo']}")
-            print("-" * 30)
+        print("\nREGISTRAr PRODUCTO")
+        nombre      = input("Nombre: ")
+        cantidad    = int(input("Cantidad inicial: "))
+        precio      = float(input("Precio unitario: "))
+        categoria   = input("Categoría: ")
+        stock_min   = int(input("stock mínimo: "))
 
-    def productos_bajo_stock(self):
-        ruta = get_file_path("productos.csv")
+        producto_id = self.__siguiente_id_producto()
 
-        with open(ruta, mode="r", newline="", encoding="utf-8") as archivo:
-            lector = csv.DictReader(archivo)
-            productos = list(lector)
+        nuevo = Producto(producto_id, nombre, cantidad, precio, categoria, stock_min)
+        self.__productos[self.__nroProductos] = nuevo
+        self.__nroProductos += 1
 
-        encontrados = 0
-        print("\n--- PRODUCTOS CON POCO STOCK ---")
+        self.__guardar_productos()
+        print(f"Producto '{nombre}' registrado con ID {producto_id}.")
 
-        for producto in productos:
-            cantidad = int(producto["cantidad"])
-            stock_minimo = int(producto["stock_minimo"])
-
-            if cantidad <= stock_minimo:
-                print(f"ID: {producto['producto_id']}")
-                print(f"Nombre: {producto['nombre']}")
-                print(f"Cantidad: {producto['cantidad']}")
-                print(f"Stock mínimo: {producto['stock_minimo']}")
-                print("-" * 30)
-                encontrados = encontrados + 1
-
-        if encontrados == 0:
-            print("No hay productos con poco stock.")
 
     def actualizar_stock(self):
-        ruta = get_file_path("productos.csv")
+        print("\nACTUALIZAR STOCK")
+        id_buscar = int(input("ingrese el ID del producto: "))
 
-        with open(ruta, mode="r", newline="", encoding="utf-8") as archivo:
-            lector = csv.DictReader(archivo)
-            productos = list(lector)
+        pos = -1
+        for i in range(self.__nroProductos):
+            if self.__productos[i].producto_id == id_buscar:
+                pos = i
 
-        producto_id_buscar = input("Ingrese el ID del producto a actualizar: ")
-        encontrado = False
-
-        for producto in productos:
-            if producto["producto_id"] == producto_id_buscar:
-                print(f"Producto encontrado: {producto['nombre']}")
-                print(f"Stock actual: {producto['cantidad']}")
-
-                cambio = int(input("Ingrese la cantidad a sumar (+) o restar (-): "))
-                nueva_cantidad = int(producto["cantidad"]) + cambio
-                producto["cantidad"] = str(nueva_cantidad)
-
-                encontrado = True
-                break
-
-        if not encontrado:
-            print("Producto no encontrado.")
+        if pos == -1:
+            print("producto no encontrado.")
             return
 
-        with open(ruta, mode="w", newline="", encoding="utf-8") as archivo:
-            campos = [
-                "producto_id",
-                "nombre",
-                "cantidad",
-                "precio",
-                "categoria",
-                "stock_minimo"
-            ]
-            escritor = csv.DictWriter(archivo, fieldnames=campos)
-            escritor.writeheader()
-            escritor.writerows(productos)
+        print(f"Producto: {self.__productos[pos].nombre}")
+        print(f"Stock actual: {self.__productos[pos].cantidad}")
+        cambio = int(input("cantidad a sumar (+) o restar (-): "))
+        self.__productos[pos].actualizar_stock(cambio)
 
-        print("Stock actualizado correctamente.")
-            
+        self.__guardar_productos()
+        print(f"stock actualizado. Nuevo stock: {self.__productos[pos].cantidad}")
+
+    def productos_bajo_stock(self):
+        print("\nPRODUCTOS CON POCO STOCK")
+        encontrados = 0
+
+        for i in range(self.__nroProductos):
+            if self.__productos[i].tiene_poco_stock():
+                self.__productos[i].mostrar()
+                print("  Stock bajo")
+                print("-" * 30)
+                encontrados += 1
+
+        if encontrados == 0:
+            print("todos los productos tienen stock suficiente.")
+
+    def ver_productos(self):
+        print("\nINVENTARIO COMPLETO")
+
+        if self.__nroProductos == 0:
+            print("no hay productos registrados.")
+            return
+
+        for i in range(self.__nroProductos):
+            print(f"\nProducto #{i + 1}")
+            self.__productos[i].mostrar()
+            print("-" * 30)
+                
+#fin metodos productos-----------------------------------------------------------------------------------------------
 
 #Métodos Alejo
     def registrar_cliente(self, name, phone):
