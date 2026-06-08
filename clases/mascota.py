@@ -6,9 +6,9 @@ class Mascota:
 
     __TAM_REGISTRO_MEDICO = 200
 
-    def __init__(self, nombre: str, especie: str, raza: str, edad: int, cliente_id: int, mascota_id = None):
+    def __init__(self, n: str, especie: str, raza: str, edad: int, cliente_id: int, mascota_id = None):
         self.__mascota_id = mascota_id
-        self.__nombre = nombre
+        self.__nombre = n
         self.__especie = especie
         self.__raza = raza
         self.__edad = edad
