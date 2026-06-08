@@ -21,7 +21,7 @@ class Mascota:
         return self.__mascota_id
 
     @property
-    def nombre(self):
+    def n(self):
         return self.__nombre
     
     @property
