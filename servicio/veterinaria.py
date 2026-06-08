@@ -227,7 +227,7 @@ class Veterinaria:
 
     def consultar_cliente(self, cliente_id: str):
         for i in range(0, self.__nroClientes, 1):
-            if self.__clientes[i].cliente_id == cliente_id:  # busca por id
+            if self.__clientes[i].cliente_id == cliente_id:  
                 return i
         return -1
 
