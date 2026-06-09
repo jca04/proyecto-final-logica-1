@@ -40,12 +40,52 @@ class Menu:
                     print("Opción no válida. Por favor, seleccione una opción del menú.")
      
     def __menu_clientes(self):
-        print("Menú de Clientes")
-        print("Funcionalidad en desarrollo.")
+    opcion = 0
+    while opcion != 3:
+        print("\n--- MENÚ CLIENTES ---")
+        print("1. Registrar cliente")
+        print("2. Consultar cliente")
+        print("3. Volver")
+
+        opcion = int(input("Seleccione una opción: "))
+
+        if opcion == 1:
+            cliente_id = input("ID del cliente: ")
+            nombre = input("Nombre del cliente: ")
+            telefono = input("Teléfono: ")
+            cedula = input("Cédula: ")
+            self.registrar_cliente(cliente_id, nombre, telefono, cedula)
+
+        elif opcion == 2:
+            cliente_id = input("ID del cliente: ")
+            self.consultar_cliente(cliente_id)
+
+        elif opcion == 3:
+            print("Volviendo al menú principal...")
+
+        else:
+            print("Opción no válida.")
 
     def __menu_mascotas(self):
-        print("Menú de Mascotas")
-        print("Funcionalidad en desarrollo.")       
+    opcion = 0
+    while opcion != 3:
+        print("\n--- MENÚ MASCOTAS ---")
+        print("1. Registrar mascota")
+        print("2. Listar mascotas de un cliente")
+        print("3. Volver")
+
+        opcion = int(input("Seleccione una opción: "))
+
+        if opcion == 1:
+            cliente_id = input("ID del cliente: ")
+            nombre = input("Nombre de la mascota: ")
+            especie = input("Especie: ")
+            raza = input("Raza: ")
+            edad = int(input("Edad: "))
+            mascota_id = input("ID de la mascota (Enter para omitir): ")
+            if mascota_id == "":
+                mascota_id = None
+            self.registrar_mascota(cliente_id, nombre, especie, raza, edad, mascota_id)       
 
     def __menu_citas(self):
         
