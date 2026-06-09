@@ -1,1 +1,4 @@
-ef2cd685-a4dc-42df-a416-00fb90690988,Juan Carlos,3225335837,Cardiologia
+vet_id,nombre,telefono,especialidad
+1,Juan Carlos,3225335837,Cardiologia
+2,Laura,3225335838,Neurologia
+3,Andres,3225335839,Traumatologia

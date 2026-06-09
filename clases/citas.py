@@ -4,7 +4,7 @@ from utils.citas import existe_cita_para_mascota, obtener_veterinarios_disponibl
 
 class Citas:
 
-    def __init__(self, mascota_id: str, vet_id: str, fecha: str, hora: str, motivo: str, estado: str = "agendada", cita_id = None):
+    def __init__(self, mascota_id: int, vet_id: int, fecha: str, hora: str, motivo: str, especialidad: str, estado: str = "agendada",  cita_id = None):
         self.__cita_id = cita_id
         self.__mascota_id = mascota_id
         self.__vet_id = vet_id
@@ -12,6 +12,7 @@ class Citas:
         self.__hora = hora
         self.__motivo = motivo
         self.__estado = estado
+        self.__especialidad = especialidad
 
     def marcar_atendida(self):
         self.__estado = "atendida"
@@ -40,6 +41,10 @@ class Citas:
 
     @property
     def estado(self): return self.__estado
+
+    @property
+    def especialidad(self):
+        return self.__especialidad
 
     def registrar_cita(self, fecha: str, hora: str, motivo: str, especialidad: str, mascota_id: str):
 

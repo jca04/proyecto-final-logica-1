@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 from clases.cliente import Cliente
+from clases.mascota import Mascota
 from clases.producto import Producto   # import de angel
 from clases.citas import Citas
 from clases.veterinario import Veterinario
@@ -9,10 +10,11 @@ from utils.obtener_bd import get_file_path
 
 class Veterinaria:
 
-    __TAM = 200 # tamaño que vamos a usar para llenar los arreglos
-
 
     def __init__(self, nombre, direccion, telefono):
+
+        self.__TAM = 200 # tamaño que vamos a usar para llenar los arreglos
+
         self.nombre = nombre
         self.direccion = direccion
         self.telefono = telefono
@@ -38,10 +40,9 @@ class Veterinaria:
 
     def __cargar_todo(self):
         self.__cargar_clientes()
-        #self.__cargar_mascotas()    # depende de que clientes ya estén cargados
-        #self.__cargar_registros()   # depende de que mascotas ya estén cargadas
         self.__cargar_citas()
         self.__cargar_productos() 
+        self.__cargar_veterinarios()
 
     
     def __cargar_clientes(self):
@@ -71,6 +72,19 @@ class Veterinaria:
                 )
                 self.__citas[self.__nroCitas] = ci
                 self.__nroCitas += 1
+    
+    def __cargar_veterinarios(self):
+        with open(get_file_path("veterinarios.csv"), "r") as f:
+            lector = csv.DictReader(f)
+            for linea in lector:
+                v = Veterinario(
+                    int(linea["vet_id"]),
+                    linea["nombre"],
+                    linea["telefono"],
+                    linea["especialidad"]
+                )
+                self.__veterinarios[self.__nroVeterinarios] = v
+                self.__nroVeterinarios += 1
 
     ## generación y validacion de ids para no pisar ninguno existente, se tendria que hacer por cada clase
 
@@ -217,42 +231,85 @@ class Veterinaria:
 #fin metodos productos-----------------------------------------------------------------------------------------------
 
 #Métodos Alejo
-    def registrar_cliente(self, cliente_id: str, nombre: str, telefono: str, cedula: str):
-        if self.__nroClientes < len(self.__clientes):
-            self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
-            self.__nroClientes = self.__nroClientes + 1
-            print(f"El cliente {nombre} ha sido registrado con éxito.")
-        else:
-           print("No hay espacio para más clientes.")
+    def registrar_cliente(self, nombre: str, telefono: str, cedula: str) -> Cliente | None:
 
-    def consultar_cliente(self, cliente_id: str):
+        clientes = self.__clientes[:self.__nroClientes] # aqui obtengo solo los clientes que ya están registrados, no todo el arreglo
+
+        for cliente in clientes:
+            if cliente.cedula == cedula:
+                print("El cliente ya está registrado.")
+                return
+        
+        cliente_id = self.__siguiente_id_cliente()
+        self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
+        self.__nroClientes = self.__nroClientes + 1
+        self.__guardar_clientes()
+
+        print(f"El cliente {nombre} ha sido registrado con éxito.")
+
+        return self.__clientes[self.__nroClientes - 1] # retorno el cliente que acabo de registrar
+
+        # if self.__nroClientes < len(self.__clientes):
+        #     self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
+        #     self.__nroClientes = self.__nroClientes + 1
+        #     print(f"El cliente {nombre} ha sido registrado con éxito.")
+        # else:
+        #    print("No hay espacio para más clientes.")
+
+    def consultar_cliente(self, cliente_id = None, cedula = None) -> Cliente | None:
         for i in range(0, self.__nroClientes, 1):
-            if self.__clientes[i].cliente_id == cliente_id:  
-                return i
-        return -1
+            if cliente_id is not None and self.__clientes[i].cliente_id == cliente_id:
+                return self.__clientes[i]
 
-    def registrar_mascota(self, cliente_id: str, nombre: str, especie: str, raza: str, edad: int, mascota_id=None):
-        indice = self.consultar_cliente(cliente_id)
-        if indice == -1:
+            if cedula is not None and self.__clientes[i].cedula == cedula:
+                return self.__clientes[i]
+            
+        return None
+
+    def registrar_mascota(self, cliente_id: int, nombre: str, especie: str, raza: str, edad: int) -> Mascota | None:
+        cliente = self.consultar_cliente(cliente_id)
+        if cliente is None:
             print(f"El cliente con id {cliente_id} no está registrado.")
         else:
-            self.__clientes[indice].agregarMascota(nombre, especie, raza, edad, mascota_id)
-            print(f"La mascota {nombre} está asociada al cliente {cliente_id}.")
+            cliente.agregarMascota(nombre, especie, raza, edad, cliente_id)
+            print(f"\nLa mascota {nombre} se registro al cliente {cliente.nombre}.")
 
-    def listar_mascotas(self, cliente_id: str):
-        indice = self.consultar_cliente(cliente_id)
-        if indice == -1:
+            return cliente.mascotas[cliente.nroMascotas - 1] # retorno la mascota que acabo de registrar
+
+    def listar_mascotas(self, cliente_id: int):
+        cliente = self.consultar_cliente(cliente_id)
+        if cliente is None:
             print(f"El cliente con id {cliente_id} no está registrado.")
         else:
-            cliente = self.__clientes[indice]
             print(f"\nMascotas de {cliente.nombre}:")
-            for i in range(0, cliente.nroMascotas, 1):
-                mascota = cliente.mascotas[i]
-                print(f"  - {mascota.n} ({mascota.especie}, {mascota.raza}, {mascota.edad} años)")
+            cliente.listar_mascotas(cliente_id)
+
+    def __guardar_clientes(self):
+        with open(get_file_path("clientes.csv"), mode="w") as f:
+            campos = ["cliente_id", "nombre", "telefono", "cedula"]
+            escritor = csv.DictWriter(f, fieldnames=campos)
+            escritor.writeheader()
+
+            for c in self.__clientes[:self.__nroClientes]:
+                escritor.writerow({
+                    "cliente_id": c.cliente_id,
+                    "nombre": c.nombre,
+                    "telefono": c.telefono,
+                    "cedula": c.cedula
+                })
     
 
     ## Metodos para las citas
-    def crear_cita(self, fecha, hora, motivo, especialidad, mascota_id):
+
+    def consultar_veterinario(self, vet_id: int) -> Veterinario | None:
+        for i in range(0, self.__nroVeterinarios, 1):
+            if self.__veterinarios[i].vet_id == vet_id:
+                return self.__veterinarios[i]
+            
+        return None
+
+
+    def crear_cita(self, fecha, hora, motivo, especialidad, mascota_id) -> Citas | None:
         
         citas_activas = self.__citas[:self.__nroCitas] # aqui obtengo solo las citas que ya están registradas, no todo el arreglo
 
@@ -264,7 +321,7 @@ class Veterinaria:
                 break
 
         if cita_duplicada:
-            print("La mascota ya tiene una cita agendada en ese horario.")
+            print("\nLa mascota ya tiene una cita agendada en ese horario.")
             return
         
         veterinarios_activos = self.__veterinarios[:self.__nroVeterinarios]
@@ -289,11 +346,30 @@ class Veterinaria:
         veterinario_asignado = veterinarios_disponibles[0]
 
         cita_id = self.__siguiente_id_cita()
-        self.__citas[self.__nroCitas] = Citas(mascota_id, veterinario_asignado.veterinario_id, fecha, hora, motivo, "agendada", cita_id)
+        self.__citas[self.__nroCitas] = Citas(mascota_id, veterinario_asignado.vet_id, fecha, hora, motivo, especialidad, "agendada", cita_id)
         self.__nroCitas = self.__nroCitas + 1
         self.__guardar_citas()
 
+        return self.__citas[self.__nroCitas - 1] # retorno la cita que acabo de registrar y el veterinario asignado a esa cita
+
     
+    def listar_citas_mascota(self, mascota_id: int):
+        citas_activas = self.__citas[:self.__nroCitas]
+
+        print(f"\nCitas agendadas para la mascota con ID {mascota_id}:")
+
+        for c in citas_activas:
+            if c.mascota_id == mascota_id:
+                print(f"\nFecha: {c.fecha}")
+                print(f"Hora: {c.hora}")
+                print(f"Motivo: {c.motivo}")
+                print(f"Especialidad: {c.especialidad}")
+                vet = self.consultar_veterinario(c.vet_id)
+                if vet is not None:
+                    print(f"Veterinario asignado: {vet.nombre}")
+                print("-" * 30)
+
+
     def __guardar_citas(self):
         with open(get_file_path("citas.csv"), "w") as f:
             campos = ["cita_id", "fecha", "hora", "motivo", "estado", "mascota_id", "vet_id"]
