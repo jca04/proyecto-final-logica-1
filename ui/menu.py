@@ -42,7 +42,7 @@ class Menu:
     def __menu_clientes(self):
     opcion = 0
     while opcion != 3:
-        print("\n--- MENÚ CLIENTES ---")
+        print("\n============= Menú Clientes =============")
         print("1. Registrar cliente")
         print("2. Consultar cliente")
         print("3. Volver")
@@ -69,7 +69,7 @@ class Menu:
     def __menu_mascotas(self):
     opcion = 0
     while opcion != 3:
-        print("\n--- MENÚ MASCOTAS ---")
+        print("\n============= Menú Mascotas =============")
         print("1. Registrar mascota")
         print("2. Listar mascotas de un cliente")
         print("3. Volver")
