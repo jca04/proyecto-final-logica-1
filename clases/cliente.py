@@ -64,11 +64,6 @@ class Cliente:
         self.__guardar_mascotas()
 
 
-        # if self.__nroMascotas < len(self.__mascotas):
-        #     self.__mascotas[self.__nroMascotas] = Mascota(nombre, especie, raza, edad, cliente_id, mascota_id)
-        #     self.__nroMascotas = self.__nroMascotas + 1
-        # else: 
-        #     print(f"El cliente {self.__nombre} no puede registrar a su mascotas.")
 
     def listar_mascotas(self, cliente_id: int):            
             mascotas = self.__mascotas[:self.__nroMascotas]
