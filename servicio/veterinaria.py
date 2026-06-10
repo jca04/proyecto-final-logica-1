@@ -69,6 +69,7 @@ class Veterinaria:
                     linea["hora"],
                     linea["motivo"],
                     linea["estado"],
+                    cita_id=int(linea["cita_id"])
                 )
                 self.__citas[self.__nroCitas] = ci
                 self.__nroCitas += 1
@@ -97,9 +98,10 @@ class Veterinaria:
         ids = np.array([], dtype=int)
 
         for c in self.__clientes[:self.__nroClientes]:
-            ids = np.append(ids, int(c.cliente_id))
+            if c.cliente_id is not None:
+                ids = np.append(ids, int(c.cliente_id))
 
-        return max(ids) + 1
+        return int(np.max(ids)) + 1
     
     def __siguiente_id_cita(self):
         if self.__nroCitas == 0:
@@ -110,7 +112,7 @@ class Veterinaria:
         for c in self.__citas[:self.__nroCitas]:
             ids = np.append(ids, int(c.cita_id))
 
-        return max(ids) + 1
+        return int(np.max(ids)) + 1
 
 #--- metodos productos
 
@@ -136,9 +138,10 @@ class Veterinaria:
         ids = np.array([], dtype=int)
 
         for p in self.__productos[:self.__nroProductos]:
-            ids = np.append(ids, int(p.producto_id))
+            if p.producto_id is not None:
+                ids = np.append(ids, int(p.producto_id))
 
-        return max(ids) + 1
+        return int(np.max(ids)) + 1
     
     def __guardar_productos(self):
         ruta = get_file_path("productos.csv")
@@ -248,23 +251,27 @@ class Veterinaria:
         print(f"El cliente {nombre} ha sido registrado con éxito.")
 
         return self.__clientes[self.__nroClientes - 1] # retorno el cliente que acabo de registrar
-
-        # if self.__nroClientes < len(self.__clientes):
-        #     self.__clientes[self.__nroClientes] = Cliente(cliente_id, nombre, telefono, cedula)
-        #     self.__nroClientes = self.__nroClientes + 1
-        #     print(f"El cliente {nombre} ha sido registrado con éxito.")
-        # else:
-        #    print("No hay espacio para más clientes.")
-
+    
+    
     def consultar_cliente(self, cliente_id = None, cedula = None) -> Cliente | None:
         for i in range(0, self.__nroClientes, 1):
-            if cliente_id is not None and self.__clientes[i].cliente_id == cliente_id:
+            if cliente_id is not None and int(self.__clientes[i].cliente_id) == cliente_id:
                 return self.__clientes[i]
 
-            if cedula is not None and self.__clientes[i].cedula == cedula:
+            if cedula is not None and int(self.__clientes[i].cedula) == cedula:
                 return self.__clientes[i]
             
         return None
+    
+    def listar_clientes(self):
+        print("\nLISTA DE CLIENTES")
+        for i in range(0, self.__nroClientes, 1):
+            c = self.__clientes[i]
+            print(f"\nID: {c.cliente_id}")
+            print(f"Nombre: {c.nombre}")
+            print(f"Teléfono: {c.telefono}")
+            print(f"Cédula: {c.cedula}")
+            print("-" * 30)
 
     def registrar_mascota(self, cliente_id: int, nombre: str, especie: str, raza: str, edad: int) -> Mascota | None:
         cliente = self.consultar_cliente(cliente_id)
@@ -283,6 +290,14 @@ class Veterinaria:
         else:
             print(f"\nMascotas de {cliente.nombre}:")
             cliente.listar_mascotas(cliente_id)
+    
+    def listar_mascotas_completo(self):
+        print("\nLISTA COMPLETA DE MASCOTAS")
+        for i in range(0, self.__nroClientes, 1):
+            c = self.__clientes[i]
+            print(f"\nCliente: {c.nombre} (ID: {c.cliente_id})")
+            c.listar_mascotas(c.cliente_id)
+            print("-" * 30)
 
     def __guardar_clientes(self):
         with open(get_file_path("clientes.csv"), mode="w") as f:
@@ -369,6 +384,31 @@ class Veterinaria:
                     print(f"Veterinario asignado: {vet.nombre}")
                 print("-" * 30)
 
+    def listar_citas_de_mascota(self, mascota_id: int):
+        print(f"\nCitas agendadas para la mascota con ID {mascota_id}:")
+        for i in range(0, self.__nroCitas, 1):
+            c = self.__citas[i]
+            if c.mascota_id == mascota_id:
+                print(f"\nID de cita: {c.cita_id}")
+                print(f"Fecha: {c.fecha}")
+                print(f"Hora: {c.hora}")
+                print(f"Motivo: {c.motivo}")
+                print(f"Especialidad: {c.especialidad}")
+                vet = self.consultar_veterinario(c.vet_id)
+                if vet is not None:
+                    print(f"Veterinario asignado: {vet.nombre}")
+                print("-" * 30)
+
+    def cancelar_cita(self, cita_id: int):
+        for i in range(0, self.__nroCitas, 1):
+            if self.__citas[i].cita_id == cita_id:
+                self.__citas[i].cancelar()
+                self.__guardar_citas()
+                print(f"\nLa cita con ID {cita_id} ha sido cancelada.")
+                return
+        
+        print(f"\nNo se encontró una cita con ID {cita_id}.")
+
 
     def __guardar_citas(self):
         with open(get_file_path("citas.csv"), "w") as f:
@@ -386,4 +426,22 @@ class Veterinaria:
                     "mascota_id": c.mascota_id,
                     "vet_id": c.vet_id
                 })
+
+    def crear_registro_medico(self, mascota_id: int, diagnostico: str, tratamiento: str, observaciones: str):
+        cliente = None
+        mascota = None
+
+        for i in range(0, self.__nroClientes, 1):
+            c = self.__clientes[i]
+            for m in c.mascotas[:c.nroMascotas]:
+                if m is not None and m.mascota_id == mascota_id:
+                    cliente = c
+                    mascota = m
+                    break
+
+        if cliente is None or mascota is None:
+            print(f"No se encontró una mascota con ID {mascota_id}.")
+        else:
+            mascota.agregar_registro_medico(diagnostico, tratamiento, observaciones)
+            print(f"\nRegistro médico creado para la mascota {mascota.n} del cliente {cliente.nombre}.")
     

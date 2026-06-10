@@ -70,7 +70,7 @@ class Cliente:
         # else: 
         #     print(f"El cliente {self.__nombre} no puede registrar a su mascotas.")
 
-    def listar_mascotas(self, cliente_id):            
+    def listar_mascotas(self, cliente_id: int):            
             mascotas = self.__mascotas[:self.__nroMascotas]
             for m in mascotas:
                 if m is not None and m.cliente_id == cliente_id:

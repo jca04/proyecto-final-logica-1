@@ -40,52 +40,88 @@ class Menu:
                     print("Opción no válida. Por favor, seleccione una opción del menú.")
      
     def __menu_clientes(self):
-    opcion = 0
-    while opcion != 3:
-        print("\n============= Menú Clientes =============")
-        print("1. Registrar cliente")
-        print("2. Consultar cliente")
-        print("3. Volver")
 
-        opcion = int(input("Seleccione una opción: "))
+        while True:
 
-        if opcion == 1:
-            cliente_id = input("ID del cliente: ")
-            nombre = input("Nombre del cliente: ")
-            telefono = input("Teléfono: ")
-            cedula = input("Cédula: ")
-            self.registrar_cliente(cliente_id, nombre, telefono, cedula)
+            print("\n============= MENÚ CLIENTES =============")
+            print("1. Registrar cliente")
+            print("2. Consultar clientes")
+            print("3. Volver")
 
-        elif opcion == 2:
-            cliente_id = input("ID del cliente: ")
-            self.consultar_cliente(cliente_id)
+            try:
+                opcion = int(input("Seleccione una opción: "))
+            except ValueError:
+                print("Debe ingresar un número.")
+                continue
 
-        elif opcion == 3:
-            print("Volviendo al menú principal...")
+            if opcion == 1:
+                nombre = input("Nombre del cliente: ")
+                telefono = input("Teléfono: ")
+                cedula = input("Cédula: ")
 
-        else:
-            print("Opción no válida.")
+                self.veterinaria.registrar_cliente(
+                    nombre,
+                    telefono,
+                    cedula
+                )
+
+            elif opcion == 2:
+                self.veterinaria.listar_clientes()
+
+            elif opcion == 3:
+                break
+
+            else:
+                print("Opción no válida.")
 
     def __menu_mascotas(self):
-    opcion = 0
-    while opcion != 3:
-        print("\n============= Menú Mascotas =============")
-        print("1. Registrar mascota")
-        print("2. Listar mascotas de un cliente")
-        print("3. Volver")
 
-        opcion = int(input("Seleccione una opción: "))
+        while True:
 
-        if opcion == 1:
-            cliente_id = input("ID del cliente: ")
-            nombre = input("Nombre de la mascota: ")
-            especie = input("Especie: ")
-            raza = input("Raza: ")
-            edad = int(input("Edad: "))
-            mascota_id = input("ID de la mascota (Enter para omitir): ")
-            if mascota_id == "":
-                mascota_id = None
-            self.registrar_mascota(cliente_id, nombre, especie, raza, edad, mascota_id)       
+            print("\n============= MENÚ MASCOTAS =============")
+            print("1. Registrar mascota")
+            print("2. Listar mascotas de un cliente")
+            print("3. Volver")
+
+            try:
+                opcion = int(input("Seleccione una opción: "))
+            except ValueError:
+                print("Debe ingresar un número.")
+                continue
+
+            if opcion == 1:
+
+                self.veterinaria.listar_clientes()
+
+                cliente_id = int(input("ID del cliente: "))
+                nombre = input("Nombre de la mascota: ")
+                especie = input("Especie: ")
+                raza = input("Raza: ")
+                edad = int(input("Edad: "))
+
+                self.veterinaria.registrar_mascota(
+                    cliente_id,
+                    nombre,
+                    especie,
+                    raza,
+                    edad
+                )
+
+            elif opcion == 2:
+
+                self.veterinaria.listar_clientes()
+
+                cliente_id = int(input("ID del cliente: "))
+
+                self.veterinaria.listar_mascotas(cliente_id)
+
+            elif opcion == 3:
+
+                print("Volviendo al menú principal...")
+                break
+
+            else:
+                print("Opción no válida.")   
 
     def __menu_citas(self):
         
@@ -164,17 +200,7 @@ class Menu:
 
                 case "2":
                         print("\n--- Ver citas de una mascota ---")
-                        cedula_cliente = int(input("Ingrese la cédula del cliente: "))
-
-                        cliente = self.veterinaria.consultar_cliente(None,cedula_cliente)
-
-                        print(cliente)
-
-                        if cliente is None:
-                            print("\nCliente no se encuentra registrado en el sistema.")
-                            return
-
-                        cliente.listar_mascotas(cliente.cliente_id)
+                        self.veterinaria.listar_mascotas_completo()
 
                         mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
 
@@ -182,30 +208,39 @@ class Menu:
                 
                 case "3":
                     
-                    # print("\n--- Cancelar una cita ---")
-                    # cedula_cliente = int(input("Ingrese la cédula del cliente: "))
+                    print("\n--- Cancelar una cita ---")
+                    cedula_cliente = int(input("Ingrese la cédula del cliente: "))
 
-                    # cliente = self.veterinaria.buscar_cliente(cedula_cliente)
+                    cliente = self.veterinaria.consultar_cliente(cedula=cedula_cliente)
 
-                    # if not cliente:
-                    #     print("Cliente no encontrado.")
-                    #     return
+                    if not cliente:
+                        print("Cliente no encontrado.")
+                        return
                     
-                    # cliente.mostrar_mascotas_de_cliente(cliente["cliente_id"])
+                    cliente.listar_mascotas(cliente.cliente_id)
 
-                    # mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
+                    mascota_id = int(input("\nIngrese el ID de la mascota para ver sus citas: "))
 
-                    # cliente.mostrar_citas_de_mascota(mascota_id)
+                    self.veterinaria.listar_citas_de_mascota(mascota_id)
 
-                    # cita_id = int(input("\nIngrese el ID de la cita que desea cancelar: "))
+                    cita_id = int(input("\nIngrese el ID de la cita que desea cancelar: "))
 
-                    # self.veterinaria.cancelar_cita(cita_id)
-                    # print("Cita cancelada con éxito.")
-
-                    pass
+                    self.veterinaria.cancelar_cita(cita_id)
+                    print("\nCita cancelada con éxito.")
 
                 case "4":
-                    pass
+
+                    print("\n--- Crear registro médico para una cita ---")
+
+                    self.veterinaria.listar_mascotas_completo()
+                    
+                    mascota_id = int(input("\nIngrese el ID de la mascota para crear un registro médico: "))
+
+                    diagnostico = input("\nIngrese el diagnóstico: ")
+                    tratamiento = input("Ingrese el tratamiento recomendado: ")
+                    observaciones = input("Ingrese cualquier observación adicional: ")
+
+                    self.veterinaria.crear_registro_medico(mascota_id, diagnostico, tratamiento, observaciones)
 
                 case "0":
                     break

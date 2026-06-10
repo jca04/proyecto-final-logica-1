@@ -1,2 +1,3 @@
 mascota_id,nombre,especie,raza,edad,cliente_id
 1,tobi,Perro,Criollo,12,1
+2,Luna,Gato,Persa,2,2
